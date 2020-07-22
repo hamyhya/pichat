@@ -7,8 +7,8 @@ const deviceWidth = Dimensions.get('screen').width
 const deviceHeight = Dimensions.get('screen').height
 
 class Explore extends Component {
-  register = () => {
-    this.props.navigation.navigate('register')
+  detail = () => {
+    this.props.navigation.navigate('explore-detail')
   }
   render() {
     const data = [
@@ -36,7 +36,9 @@ class Explore extends Component {
             data={data}
             style={style.flatList}
             renderItem={({item}) => (
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('explore-detail', 
+              {image: item.image, title: item.title}
+              )}>
                 <List
                   image={item.image}
                   title={item.title}

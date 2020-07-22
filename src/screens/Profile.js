@@ -2,47 +2,60 @@ import React, {Component} from 'react'
 import {View, TextInput, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
         Text, FlatList, Image} 
       from 'react-native'
+import { concat } from 'react-native-reanimated'
 
 const deviceWidth = Dimensions.get('screen').width
 const deviceHeight = Dimensions.get('screen').height
 
 class Profile extends Component {
-  register = () => {
-    this.props.navigation.navigate('register')
+  constructor(props) {
+    super(props)
+    this.state = {
+      name: 'Ilham Bagas',
+      image: 'https://pbs.twimg.com/profile_images/1255095743112765441/_rqz4BY3.jpg',
+      username: 'bgsilham',
+      bio: "Hey there! I'm not using Whatsapp",
+      email: 'ilhambagas92@gmail.com'
+    }
+  }
+  edit = () => {
+    const {name, image, username, bio, email} = this.state
+    this.props.navigation.navigate('edit-profile', {image: image, name: name, email: email, bio: bio})
   }
   render() {
+    const {name, image, username, bio, email} = this.state
     return(
       <>
         <StatusBar backgroundColor='#121212' />
         <View style={style.fill}>
           <View style={style.imgWrapper}>
             <Image
-              source={{uri: 'https://pbs.twimg.com/profile_images/1255095743112765441/_rqz4BY3.jpg'}}
+              source={{uri: image}}
               style={style.img} 
             />
           </View>
           <View style={style.info}>
             <View style={style.infoWrapper}>
               <Text style={style.title}>Name</Text>
-              <Text style={style.subTitle}>Ilham Bagas</Text>
+              <Text style={style.subTitle}>{name}</Text>
               <View style={style.line} />
             </View>
             <View style={style.infoWrapper}>
               <Text style={style.title}>Username</Text>
-              <Text style={style.subTitle}>@bgsilham</Text>
+              <Text style={style.subTitle}>@{username}</Text>
               <View style={style.line} />
             </View>
             <View style={style.infoWrapper}>
               <Text style={style.title}>Email</Text>
-              <Text style={style.subTitle}>ilham@mail.com</Text>
+              <Text style={style.subTitle}>{email}</Text>
               <View style={style.line} />
             </View>
             <View style={style.infoWrapper}>
               <Text style={style.title}>Bio</Text>
-              <Text style={style.subTitle}>Hey there I'm not using Whatsapp!</Text>
+              <Text style={style.subTitle}>{bio}</Text>
               <View style={style.line} />
             </View>
-            <TouchableOpacity style={style.btnEdit}>
+            <TouchableOpacity style={style.btnEdit} onPress={this.edit}>
               <Text style={style.btnEditText}>EDIT</Text>
             </TouchableOpacity>
           </View>
