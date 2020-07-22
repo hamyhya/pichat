@@ -1,19 +1,43 @@
 import React, {Component} from 'react'
 import {View, TextInput, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
-        Text} 
+        Text, Alert, ActivityIndicator} 
       from 'react-native'
+import {connect} from 'react-redux'
+import {login} from '../redux/actions/auth'
+import {getUser} from '../redux/actions/user'
 
 const deviceWidth = Dimensions.get('screen').width
 const deviceHeight = Dimensions.get('screen').height
 
 class Login extends Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      email: '',
+      password: ''
+    }
+  }
   register = () => {
     this.props.navigation.navigate('register')
   }
+  fetchUser = () => {
+    const email = 'bagas@mail.com'
+    this.props.getUser(email)
+  }
   login = () => {
-    this.props.navigation.navigate('home')
+    const { email, password } = this.state
+
+    this.props.login(email, password).then(() => {
+      this.fetchUser()
+      this.props.navigation.navigate('home')
+    }).catch(function() {
+      Alert.alert('Ooops!', 'Incorrect email or password :(')
+    })
+    
   }
   render() {
+    const {isLoading} = this.props.auth
+
     return(
       <>
         <StatusBar backgroundColor='#121212' />
@@ -26,16 +50,24 @@ class Login extends Component {
               placeholder='Email'
               style={style.input} 
               placeholderTextColor='#B8B8B8'
+              onChangeText={(e) => {this.setState({email: e})}}
             />
             <TextInput 
               placeholder='Password'
               style={style.input} 
               placeholderTextColor='#B8B8B8'
               secureTextEntry
+              onChangeText={(e) => {this.setState({password: e})}}
             />
+            {!isLoading ? (
             <TouchableOpacity style={style.btn} onPress={this.login}>
               <Text style={style.btntext}>LOGIN</Text>
             </TouchableOpacity>
+            ):(
+              <View style={style.btn}>
+                <ActivityIndicator size='large' color='white' />
+              </View>
+            )}
             <TouchableOpacity style={style.footer} onPress={this.register}>
               <Text style={style.footerText}>New user? Join here</Text>
             </TouchableOpacity>
@@ -46,9 +78,12 @@ class Login extends Component {
   }
 }
 
+const mapDispatchToProps = {login, getUser}
+const mapStateToProps = state => ({
+  auth: state.auth
+})
 
-
-export default Login
+export default connect(mapStateToProps, mapDispatchToProps)(Login)
 
 const style = StyleSheet.create({
   fill: {

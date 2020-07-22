@@ -1,8 +1,11 @@
 import React, {Component} from 'react'
-import {View, TextInput, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
-        Text, FlatList, Image} 
+import {View, ScrollView, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
+        Text, Alert, Image} 
       from 'react-native'
-import { concat } from 'react-native-reanimated'
+
+import {connect} from 'react-redux'
+import {logout} from '../redux/actions/auth'
+import {getUser} from '../redux/actions/user'
 
 const deviceWidth = Dimensions.get('screen').width
 const deviceHeight = Dimensions.get('screen').height
@@ -13,7 +16,7 @@ class Profile extends Component {
     this.state = {
       name: 'Ilham Bagas',
       image: 'https://pbs.twimg.com/profile_images/1255095743112765441/_rqz4BY3.jpg',
-      username: 'bgsilham',
+      username: 'bgsdilham',
       bio: "Hey there! I'm not using Whatsapp",
       email: 'ilhambagas92@gmail.com'
     }
@@ -22,8 +25,42 @@ class Profile extends Component {
     const {name, image, username, bio, email} = this.state
     this.props.navigation.navigate('edit-profile', {image: image, name: name, email: email, bio: bio})
   }
+  logoutModal = () => {
+    Alert.alert(
+      'Are you sure?',
+      "You'll leave me alone :(",
+      [
+        {
+          text: '',
+          // onPress: () => console.log('Ask me later pressed')
+        },
+        {
+          text: 'Cancel',
+          // onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel'
+        },
+        { text: 'Logout', 
+          onPress: this.logout 
+      }
+      ],
+      { cancelable: false }
+    )
+  }
+  logout = () => {
+    this.props.logout()
+    this.props.navigation.navigate('login')
+  }
+  fetchUser = () => {
+    const email = 'bagas@mail.com'
+    this.props.getUser(email)
+  }
+
+  componentDidMount() {
+    this.fetchUser()
+  }
   render() {
     const {name, image, username, bio, email} = this.state
+    // const {username} = this.props.user.dataUser
     return(
       <>
         <StatusBar backgroundColor='#121212' />
@@ -34,7 +71,10 @@ class Profile extends Component {
               style={style.img} 
             />
           </View>
-          <View style={style.info}>
+          <TouchableOpacity style={style.btnEdit} onPress={this.edit}>
+            <Text style={style.btnEditText}>Edit</Text>
+          </TouchableOpacity>
+          <ScrollView style={style.info}>
             <View style={style.infoWrapper}>
               <Text style={style.title}>Name</Text>
               <Text style={style.subTitle}>{name}</Text>
@@ -55,18 +95,22 @@ class Profile extends Component {
               <Text style={style.subTitle}>{bio}</Text>
               <View style={style.line} />
             </View>
-            <TouchableOpacity style={style.btnEdit} onPress={this.edit}>
-              <Text style={style.btnEditText}>EDIT</Text>
+            <TouchableOpacity style={style.btnLogout} onPress={this.logoutModal}>
+              <Text style={style.btnLogoutText}>LOGOUT</Text>
             </TouchableOpacity>
-          </View>
+          </ScrollView>
         </View>
       </>
     )
   }
 }
 
+const mapDispatchToProps = {logout, getUser}
+const mapStateToProps = state => ({
+  user: state.user
+})
 
-export default Profile
+export default connect(mapStateToProps, mapDispatchToProps)(Profile)
 
 const style = StyleSheet.create({
   fill: {
@@ -110,20 +154,34 @@ const style = StyleSheet.create({
     backgroundColor: '#2476C3',
     marginTop: 10
   },
-  btnEdit: {
+  btnLogout: {
     width: deviceWidth-50,
     height: 40,
     borderRadius: 10,
-    backgroundColor: '#2476C3',
+    backgroundColor: '#b71c1c',
     alignSelf: 'center',
     alignItems: "center",
     justifyContent: 'center',
-    marginTop: 30
+    marginTop: 30,
+    marginBottom: 30
   },
-  btnEditText: {
+  btnLogoutText: {
     color: 'white',
     fontWeight: 'bold',
     letterSpacing: 5,
     fontSize: 15,
+  },
+  btnEdit: {
+    marginTop: 5,
+    width: 50,
+    height: 25,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#2476C3',
+    borderRadius: 5
+  },
+  btnEditText: {
+    color: 'white'
   }
 })

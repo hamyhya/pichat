@@ -3,6 +3,8 @@ import {View, TextInput, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
         Text, FlatList, Image} 
       from 'react-native'
 
+import {connect} from 'react-redux'
+
 const deviceWidth = Dimensions.get('screen').width
 const deviceHeight = Dimensions.get('screen').height
 
@@ -10,6 +12,7 @@ class Chat extends Component {
   register = () => {
     this.props.navigation.navigate('register')
   }
+
   render() {
     const data = [
       {
@@ -139,7 +142,9 @@ class List extends Component {
   }
 }
 
-export default Chat
+const mapDispatchToProps = {}
+
+export default connect(null, mapDispatchToProps)(Chat)
 
 const style = StyleSheet.create({
   fill: {
