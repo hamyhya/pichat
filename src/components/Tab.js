@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import Chat from '../screens/Chat'
-import Profile from '../screens/Profile'
 import Explore from '../screens/Explore'
+import Location from '../screens/Location'
 
 const TopTab = createMaterialTopTabNavigator()
 
@@ -35,7 +35,7 @@ export default class Tab extends Component {
         >
           <TopTab.Screen name='chat' component={Chat} />
           <TopTab.Screen name='explore' component={Explore} />
-          <TopTab.Screen name='profile' component={Profile} />
+          <TopTab.Screen name='location' component={Location} />
         </TopTab.Navigator>
       </>
     )

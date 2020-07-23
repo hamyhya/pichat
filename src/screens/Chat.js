@@ -1,19 +1,35 @@
 import React, {Component} from 'react'
 import {View, TextInput, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
-        Text, FlatList, Image} 
+        Text, FlatList, Image, ActivityIndicator} 
       from 'react-native'
 
 import {connect} from 'react-redux'
+import {getUser} from '../redux/actions/user'
 
 const deviceWidth = Dimensions.get('screen').width
 const deviceHeight = Dimensions.get('screen').height
 
 class Chat extends Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      email: this.props.auth.email
+    }
+  }
   register = () => {
     this.props.navigation.navigate('register')
   }
+  fetchUser = () => {
+    const email = this.state.email
+    this.props.getUser(email)
+  }
+
+  componentDidMount() {
+    this.fetchUser()
+  }
 
   render() {
+    const {isLoading} = this.props.user
     const data = [
       {
         id: 1,
@@ -76,41 +92,49 @@ class Chat extends Component {
       <>
         <StatusBar backgroundColor='#121212' />
         <View style={style.fill}>
-          <View style={style.chatWrapper}>
-            <View style={style.header}>
-              <TextInput 
-                placeholder='Find conversations' 
-                placeholderTextColor='#B8B8B8'
-                style={style.searchInput}
-              />
-              <TouchableOpacity style={style.searchBtn}>
-                <Text style={style.searchBtnText}>search</Text>
-              </TouchableOpacity>
+          {isLoading ? (
+            <View style={style.loading}>
+              <ActivityIndicator size='large' color='white' />
             </View>
-            <View>
-              <FlatList
-                data={data}
-                style={style.flatList}
-                renderItem={({item}) => (
-                  <TouchableOpacity onPress={() => this.props.navigation.navigate('chat-detail', 
-                  {image: item.image, name: item.name, chat: item.chat})}>
-                    <List
-                      name={item.name}
-                      image={item.image}
-                      chat={item.chat}
-                      date={item.date}
-                    />
+          ):(
+            <>
+              <View style={style.chatWrapper}>
+                <View style={style.header}>
+                  <TextInput 
+                    placeholder='Find conversations' 
+                    placeholderTextColor='#B8B8B8'
+                    style={style.searchInput}
+                  />
+                  <TouchableOpacity style={style.searchBtn}>
+                    <Text style={style.searchBtnText}>search</Text>
                   </TouchableOpacity>
-                )}
-                keyExtractor={item => item.id.toString()}
-              />
-            </View>
-          </View>
-          <View style={style.btnWrapper}>
-            <TouchableOpacity style={style.btn} >
-              <Text style={style.btnText}>+</Text>
-            </TouchableOpacity>
-          </View>
+                </View>
+                <View>
+                  <FlatList
+                    data={data}
+                    style={style.flatList}
+                    renderItem={({item}) => (
+                      <TouchableOpacity onPress={() => this.props.navigation.navigate('chat-detail', 
+                      {image: item.image, name: item.name, chat: item.chat})}>
+                        <List
+                          name={item.name}
+                          image={item.image}
+                          chat={item.chat}
+                          date={item.date}
+                        />
+                      </TouchableOpacity>
+                    )}
+                    keyExtractor={item => item.id.toString()}
+                  />
+                </View>
+              </View>
+              <View style={style.btnWrapper}>
+                <TouchableOpacity style={style.btn} >
+                  <Text style={style.btnText}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
         </View>
       </>
     )
@@ -142,14 +166,22 @@ class List extends Component {
   }
 }
 
-const mapDispatchToProps = {}
+const mapDispatchToProps = {getUser}
+const mapStateToProps = state => ({
+  auth: state.auth,
+  user: state.user
+})
 
-export default connect(null, mapDispatchToProps)(Chat)
+export default connect(mapStateToProps, mapDispatchToProps)(Chat)
 
 const style = StyleSheet.create({
   fill: {
     flex: 1,
     backgroundColor: '#1B1B1B'
+  },
+  loading: {
+    marginTop: 20,
+    alignSelf: 'center'
   },
   chatWrapper: {
     backgroundColor: '#1B1B1B',

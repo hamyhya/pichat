@@ -19,7 +19,7 @@ class Profile extends Component {
       username: this.props.user.dataUser.username,
       bio: this.props.user.dataUser.bio,
       email: this.props.auth.email,
-      isLoading: this.props.user.isLoading
+      isLoading: true
     }
   }
   edit = () => {
@@ -52,62 +52,55 @@ class Profile extends Component {
     this.props.logout()
     this.props.navigation.navigate('login')
   }
-  fetchUser = () => {
-    const email =this.state.email
-    this.props.getUser(email)
-  }
+  // fetchUser = () => {
+  //   const email = this.state.email
+  //   this.props.getUser(email)
+  //   this.setState({isLoading: false})
+  // }
 
-  componentDidMount() {
-    this.fetchUser()
-  }
+  // componentDidMount() {
+  //   setTimeout(this.fetchUser, 3000)
+  // }
   render() {
     const {name, image, username, bio, email, isLoading} = this.state
     return(
       <>
         <StatusBar backgroundColor='#121212' />
         <View style={style.fill}>
-          {!isLoading ? (
-            <>
-              <View style={style.imgWrapper}>
-                <Image
-                  source={{uri: image}}
-                  style={style.img} 
-                />
-              </View>
-              <TouchableOpacity style={style.btnEdit} onPress={this.edit}>
-                <Text style={style.btnEditText}>Edit</Text>
-              </TouchableOpacity>
-              <ScrollView style={style.info}>
-                <View style={style.infoWrapper}>
-                  <Text style={style.title}>Name</Text>
-                  <Text style={style.subTitle}>{name}</Text>
-                  <View style={style.line} />
-                </View>
-                <View style={style.infoWrapper}>
-                  <Text style={style.title}>Username</Text>
-                  <Text style={style.subTitle}>@{username}</Text>
-                  <View style={style.line} />
-                </View>
-                <View style={style.infoWrapper}>
-                  <Text style={style.title}>Email</Text>
-                  <Text style={style.subTitle}>{email}</Text>
-                  <View style={style.line} />
-                </View>
-                <View style={style.infoWrapper}>
-                  <Text style={style.title}>Bio</Text>
-                  <Text style={style.subTitle}>{bio}</Text>
-                  <View style={style.line} />
-                </View>
-                <TouchableOpacity style={style.btnLogout} onPress={this.logoutModal}>
-                  <Text style={style.btnLogoutText}>LOGOUT</Text>
-                </TouchableOpacity>
-              </ScrollView>
-            </>
-          ):(
-            <View style={style.loading}>
-              <ActivityIndicator size='large' color='white' />
+          <View style={style.imgWrapper}>
+            <Image
+              source={{uri: image}}
+              style={style.img} 
+            />
+          </View>
+          <TouchableOpacity style={style.btnEdit} onPress={this.edit}>
+            <Text style={style.btnEditText}>Edit</Text>
+          </TouchableOpacity>
+          <ScrollView style={style.info}>
+            <View style={style.infoWrapper}>
+              <Text style={style.title}>Name</Text>
+              <Text style={style.subTitle}>{name}</Text>
+              <View style={style.line} />
             </View>
-          )}
+            <View style={style.infoWrapper}>
+              <Text style={style.title}>Username</Text>
+              <Text style={style.subTitle}>@{username}</Text>
+              <View style={style.line} />
+            </View>
+            <View style={style.infoWrapper}>
+              <Text style={style.title}>Email</Text>
+              <Text style={style.subTitle}>{email}</Text>
+              <View style={style.line} />
+            </View>
+            <View style={style.infoWrapper}>
+              <Text style={style.title}>Bio</Text>
+              <Text style={style.subTitle}>{bio}</Text>
+              <View style={style.line} />
+            </View>
+            <TouchableOpacity style={style.btnLogout} onPress={this.logoutModal}>
+              <Text style={style.btnLogoutText}>LOGOUT</Text>
+            </TouchableOpacity>
+          </ScrollView>
         </View>
       </>
     )
