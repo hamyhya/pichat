@@ -19,7 +19,7 @@ class Profile extends Component {
       username: this.props.user.dataUser.username,
       bio: this.props.user.dataUser.bio,
       email: this.props.auth.email,
-      isLoading: this.props.user.isLoading
+      isLoading: false
     }
   }
   edit = () => {
@@ -55,6 +55,7 @@ class Profile extends Component {
   fetchUser = () => {
     const email =this.state.email
     this.props.getUser(email)
+    this.setState({isLoading: false})
   }
 
   componentDidMount() {
@@ -62,7 +63,6 @@ class Profile extends Component {
   }
   render() {
     const {name, image, username, bio, email, isLoading} = this.state
-    // const {username} = this.props.user.dataUser
     return(
       <>
         <StatusBar backgroundColor='#121212' />
@@ -133,7 +133,7 @@ const style = StyleSheet.create({
     marginTop: 50
   },
   imgWrapper: {
-    marginTop: 30,
+    marginTop: 70,
     width: 100,
     height: 100,
     borderRadius: 50,

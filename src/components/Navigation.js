@@ -10,6 +10,7 @@ import ChatDetail from '../screens/ChatDetail'
 import Tab from './Tab'
 import EditProfile from '../screens/EditProfile'
 import ExploreDetail from '../screens/ExploreDetail'
+import Profile from '../screens/Profile'
 
 const Stack = createStackNavigator()
 
@@ -40,6 +41,15 @@ class Navigation extends Component {
                 name='chat-detail'
                 options={{
                   title: '',
+                  headerTransparent: true,
+                  headerTintColor: 'white'
+                }}
+              />
+              <Stack.Screen 
+                component={Profile}
+                name='profile'
+                options={{
+                  title: 'Profile',
                   headerTransparent: true,
                   headerTintColor: 'white'
                 }}

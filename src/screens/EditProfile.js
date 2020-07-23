@@ -25,8 +25,8 @@ class EditProfile extends Component {
     const {name, username, bio, email} = this.state
 
     this.props.editUser(email, name, bio, username).then(() => {
-      // this.props.getUser(email)
-      this.props.navigation.navigate('home')
+      this.props.getUser(email)
+      this.props.navigation.navigate('profile')
       Alert.alert('Yay!', 'Data updated successfully')
     }).catch(function() {
       Alert.alert('Oops!', 'Failed update data :(')

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {StyleSheet, View, Text, Image} from 'react-native'
+import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import Chat from '../screens/Chat'
 import Profile from '../screens/Profile'
@@ -8,19 +8,22 @@ import Explore from '../screens/Explore'
 const TopTab = createMaterialTopTabNavigator()
 
 export default class Tab extends Component {
+  profile = () => {
+    this.props.navigation.navigate('profile')
+  }
   render() {
     return(
       <>
         <View style={style.header}>
           <Text style={style.title}>Pichat</Text>
-          <View style={style.profileWrapper}>
+          <TouchableOpacity onPress={this.profile} style={style.profileWrapper}>
             <View style={style.imgWrapper}>
               <Image 
                 source={{uri: 'https://pbs.twimg.com/profile_images/1255095743112765441/_rqz4BY3.jpg'}} 
                 style={style.img}
               />
             </View>
-          </View>
+          </TouchableOpacity>
         </View>
         <TopTab.Navigator 
           tabBarOptions={{
