@@ -19,7 +19,7 @@ class Profile extends Component {
       username: this.props.user.dataUser.username,
       bio: this.props.user.dataUser.bio,
       email: this.props.auth.email,
-      isLoading: false
+      isLoading: this.props.user.isLoading
     }
   }
   edit = () => {
@@ -55,7 +55,6 @@ class Profile extends Component {
   fetchUser = () => {
     const email =this.state.email
     this.props.getUser(email)
-    this.setState({isLoading: false})
   }
 
   componentDidMount() {

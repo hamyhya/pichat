@@ -4,7 +4,8 @@ import {View, TextInput, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
       from 'react-native'
 
 import {connect} from 'react-redux'
-import {editUser, getUser} from '../redux/actions/user'
+import {editUser} from '../redux/actions/user'
+import {logout} from '../redux/actions/auth'
 
 const deviceWidth = Dimensions.get('screen').width
 const deviceHeight = Dimensions.get('screen').height
@@ -21,13 +22,34 @@ class EditProfile extends Component {
       isLoading: this.props.user.isLoading
     }
   }
+  logoutModal = () => {
+    Alert.alert(
+      'Are you sure?',
+      "You'll redirected to login page",
+      [
+        {
+          text: '',
+          // onPress: () => console.log('Ask me later pressed')
+        },
+        {
+          text: 'Cancel',
+          // onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel'
+        },
+        { text: 'Okay', 
+          onPress: this.save 
+      }
+      ],
+      { cancelable: false }
+    )
+  }
   save = () => {
     const {name, username, bio, email} = this.state
 
     this.props.editUser(email, name, bio, username).then(() => {
-      this.props.getUser(email)
-      this.props.navigation.navigate('profile')
-      Alert.alert('Yay!', 'Data updated successfully')
+      this.props.logout()
+      this.props.navigation.navigate('login')
+      Alert.alert('Yay!', 'Succes, now restart your session')
     }).catch(function() {
       Alert.alert('Oops!', 'Failed update data :(')
     })
@@ -73,7 +95,7 @@ class EditProfile extends Component {
               />
             </View>
             {!isLoading ? (
-              <TouchableOpacity style={style.btnEdit} onPress={this.save}>
+              <TouchableOpacity style={style.btnEdit} onPress={this.logoutModal}>
                 <Text style={style.btnEditText}>SAVE</Text>
               </TouchableOpacity>
             ):(
@@ -88,7 +110,7 @@ class EditProfile extends Component {
   }
 }
 
-const mapDispatchToProps = {editUser, getUser}
+const mapDispatchToProps = {editUser, logout}
 const mapStateToProps = state => ({
   user: state.user
 })
