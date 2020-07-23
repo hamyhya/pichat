@@ -16,8 +16,8 @@ class Chat extends Component {
       email: this.props.auth.email
     }
   }
-  register = () => {
-    this.props.navigation.navigate('register')
+  addChat = () => {
+    this.props.navigation.navigate('add-chat')
   }
   fetchUser = () => {
     const email = this.state.email
@@ -129,7 +129,7 @@ class Chat extends Component {
                 </View>
               </View>
               <View style={style.btnWrapper}>
-                <TouchableOpacity style={style.btn} >
+                <TouchableOpacity style={style.btn} onPress={this.addChat}>
                   <Text style={style.btnText}>+</Text>
                 </TouchableOpacity>
               </View>

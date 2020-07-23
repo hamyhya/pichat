@@ -11,6 +11,8 @@ import Tab from './Tab'
 import EditProfile from '../screens/EditProfile'
 import ExploreDetail from '../screens/ExploreDetail'
 import Profile from '../screens/Profile'
+import AddChat from '../screens/AddChat'
+import UserDetail from '../screens/UserDetail'
 
 const Stack = createStackNavigator()
 
@@ -70,6 +72,24 @@ class Navigation extends Component {
                   title: '',
                   headerTransparent: true,
                   headerTintColor: 'white'
+                }}
+              />
+              <Stack.Screen 
+                component={AddChat}
+                name='add-chat'
+                options={{
+                  title: '',
+                  headerTransparent: true,
+                  headerTintColor: 'white'
+                }}
+              />
+              <Stack.Screen 
+                component={UserDetail}
+                name='user-detail'
+                options={{
+                  title: '',
+                  headerTransparent: true,
+                  headerTintColor: 'black'
                 }}
               />
             </>

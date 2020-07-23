@@ -18,8 +18,12 @@ class ChatDetail extends Component {
       chat: this.props.route.params.chat,
     }
   }
-  register = () => {
-    this.props.navigation.navigate('register')
+  user = () => {
+    const {image, name} = this.state
+    this.props.navigation.navigate('user-detail', {
+      image: image,
+      name: name
+    })
   }
   render() {
     const { image, chat, name } = this.state
@@ -27,7 +31,7 @@ class ChatDetail extends Component {
       <>
         <StatusBar backgroundColor='#121212' />
         <View style={style.fill}>
-          <View style={style.header}>
+          <TouchableOpacity style={style.header} onPress={this.user}>
             <View style={style.imgWrapper}>
               <Image style={style.img} source={{uri: image}}/>
             </View>
@@ -35,7 +39,7 @@ class ChatDetail extends Component {
               <Text style={style.name}>{name}</Text>
               <Text style={style.bio}>Hey there! I'm not using Whatsapp</Text>
             </View>
-          </View>
+          </TouchableOpacity>
           <View style={style.content}>
             <View style={style.chatDisplay}>
               <View style={style.messageReceive}>
@@ -55,9 +59,6 @@ class ChatDetail extends Component {
               <TouchableOpacity style={style.btn}>
                 <Image style={style.imgBtn} source={send}/>
               </TouchableOpacity>
-              <TouchableOpacity style={style.btn}>
-                <Image style={style.imgBtn} source={location}/>
-              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -74,6 +75,7 @@ const style = StyleSheet.create({
     backgroundColor: '#1B1B1B'
   },
   header: {
+    width: deviceWidth,
     height: 60,
     backgroundColor: '#2B2B2B',
     flexDirection: 'row',
@@ -137,10 +139,11 @@ const style = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     marginTop: 5,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignSelf: 'center'
   },
   input: {
-    width: deviceWidth-140,
+    width: deviceWidth-90,
     height: 50,
     backgroundColor: '#2B2B2B',
     borderRadius: 25,
