@@ -1,10 +1,12 @@
 import React, {Component} from 'react'
 import {View, TextInput, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
-        Text, Alert, ActivityIndicator} 
+        Text, Alert, ActivityIndicator, Image} 
       from 'react-native'
 import {connect} from 'react-redux'
 import {login} from '../redux/actions/auth'
 import {getUser} from '../redux/actions/user'
+import AnimatedSplash from "react-native-animated-splash-screen"
+import logo from '../assets/logo.png'
 
 const deviceWidth = Dimensions.get('screen').width
 const deviceHeight = Dimensions.get('screen').height
@@ -14,7 +16,8 @@ class Login extends Component {
     super(props)
     this.state = {
       email: '',
-      password: ''
+      password: '',
+      isLoaded: false
     }
   }
   register = () => {
@@ -32,49 +35,65 @@ class Login extends Component {
     }).catch(function() {
       Alert.alert('Ooops!', 'Incorrect email or password :(')
     })
-    
+  }
+  loaded = () => {
+    this.setState({isLoaded: true})
+  }
+  componentDidMount(){
+    setTimeout(this.loaded, 3000)
   }
   render() {
     const loading = {
       user: this.props.user.isLoading,
       auth: this.props.auth.isLoading
     }
-
+    const {isLoaded} =this.state
     return(
       <>
         <StatusBar backgroundColor='#121212' />
-        <View style={style.fill}>
-          <View style={style.header}>
-            <Text style={style.title}>p!</Text>
+        {isLoaded ? (
+          <View style={style.fill}>
+            <View style={style.header}>
+              <Image source={logo} style={style.img}/>
+            </View>
+            <View style={style.formWrapper}>
+              <TextInput 
+                placeholder='Email'
+                style={style.input} 
+                placeholderTextColor='#B8B8B8'
+                onChangeText={(e) => {this.setState({email: e})}}
+              />
+              <TextInput 
+                placeholder='Password'
+                style={style.input} 
+                placeholderTextColor='#B8B8B8'
+                secureTextEntry
+                onChangeText={(e) => {this.setState({password: e})}}
+              />
+              {!loading.user && !loading.auth ? (
+              <TouchableOpacity style={style.btn} onPress={this.login}>
+                <Text style={style.btntext}>LOGIN</Text>
+              </TouchableOpacity>
+              ):(
+                <View style={style.btn}>
+                  <ActivityIndicator size='large' color='white' />
+                </View>
+              )}
+              <TouchableOpacity style={style.footer} onPress={this.register}>
+                <Text style={style.footerText}>New user? Join here</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-          <View style={style.formWrapper}>
-            <TextInput 
-              placeholder='Email'
-              style={style.input} 
-              placeholderTextColor='#B8B8B8'
-              onChangeText={(e) => {this.setState({email: e})}}
-            />
-            <TextInput 
-              placeholder='Password'
-              style={style.input} 
-              placeholderTextColor='#B8B8B8'
-              secureTextEntry
-              onChangeText={(e) => {this.setState({password: e})}}
-            />
-            {!loading.user && !loading.auth ? (
-            <TouchableOpacity style={style.btn} onPress={this.login}>
-              <Text style={style.btntext}>LOGIN</Text>
-            </TouchableOpacity>
-            ):(
-              <View style={style.btn}>
-                <ActivityIndicator size='large' color='white' />
-              </View>
-            )}
-            <TouchableOpacity style={style.footer} onPress={this.register}>
-              <Text style={style.footerText}>New user? Join here</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        ):(
+          <AnimatedSplash
+            translucent={true}
+            isLoaded={isLoaded}
+            logoImage={require("../assets/splash.png")}
+            backgroundColor={"#1B1B1B"}
+            logoHeight={120}
+            logoWidht={120}
+          />
+        )}
       </>
     )
   }
@@ -96,12 +115,14 @@ const style = StyleSheet.create({
   header: {
     width: 90,
     height: 90,
-    backgroundColor: '#2476C3',
-    borderRadius: 50,
     alignSelf: 'center',
     marginTop: 50,
-    alignItems: 'center',
-    justifyContent: 'center'
+  },
+  img: {
+    flex: 1, 
+    resizeMode: 'cover',
+    width: 90,
+    height: 90,
   },
   title: {
     color: 'white',

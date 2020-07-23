@@ -64,7 +64,7 @@ const style = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 25,
-    letterSpacing: 3,
+    letterSpacing: 3, 
     alignSelf: 'center',
     textTransform: 'uppercase'
   },
