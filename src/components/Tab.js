@@ -4,14 +4,35 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import Chat from '../screens/Chat'
 import Explore from '../screens/Explore'
 import Location from '../screens/Location'
+import storage from '@react-native-firebase/storage'
+
+import {connect} from 'react-redux'
+import settings from '../assets/settings.png'
 
 const TopTab = createMaterialTopTabNavigator()
 
-export default class Tab extends Component {
+class Tab extends Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      image: 'https://thumbs.dreamstime.com/b/default-avatar-profile-vector-user-profile-default-avatar-profile-vector-user-profile-profile-179376714.jpg',
+      imageName: this.props.user.dataUser.image
+    }
+  }
   profile = () => {
     this.props.navigation.navigate('profile')
   }
+  // getUrlUpload = () => {
+  //   const {imageName} = this.state
+  //   storage().ref(imageName).getDownloadURL().then((url) => {
+  //     this.setState({image: url})
+  //   })
+  // }
+  // componentDidMount(){
+  //   this.getUrlUpload()
+  // }
   render() {
+    const {image} = this.state
     return(
       <>
         <View style={style.header}>
@@ -19,7 +40,7 @@ export default class Tab extends Component {
           <TouchableOpacity onPress={this.profile} style={style.profileWrapper}>
             <View style={style.imgWrapper}>
               <Image 
-                source={{uri: 'https://pbs.twimg.com/profile_images/1255095743112765441/_rqz4BY3.jpg'}} 
+                source={settings} 
                 style={style.img}
               />
             </View>
@@ -41,6 +62,12 @@ export default class Tab extends Component {
     )
   }
 }
+
+const mapStateToProps = state => ({
+  user: state.user
+})
+
+export default connect(mapStateToProps)(Tab)
 
 const style = StyleSheet.create({
   header: {
@@ -67,17 +94,10 @@ const style = StyleSheet.create({
     color: 'white'
   },
   imgWrapper: {
-    width: 40,
-    height: 40,
-    borderRadius: 50,
-    backgroundColor: '#2476C3',
-    marginLeft: 10,
-    position: 'relative',
-    borderWidth: 3,
-    borderColor: '#2476C3'
+    width: 25,
+    height: 25,
   },
   img: {
-    borderRadius: 50,
     resizeMode: 'cover',
     width: undefined,
     height: undefined,

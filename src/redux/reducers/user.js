@@ -1,5 +1,6 @@
 const initialState = {
   isLoading: false,
+  isLoadingImg: false,
   isError: false,
   errorMsg: '',
   dataUser: []
@@ -50,6 +51,28 @@ const user = (state=initialState, action) => {
         isLoading: false,
         isError: false,
         dataUser: action.payload._data,
+      }
+    }
+    case 'UPLOADIMG_PENDING': {
+      return {
+        ...state,
+        isLoadingImg: true,
+        isError: false
+      }
+    }
+    case 'UPLOADIMG_REJECTED': {
+      return {
+        ...state,
+        isLoadingImg: false,
+        isError: true,
+        errorMsg: 'failed!',
+      }
+    }
+    case 'UPLOADIMG_FULFILLED': {
+      return {
+        ...state,
+        isLoadingImg: false,
+        isError: false,
       }
     }
     case 'LOGOUT': {

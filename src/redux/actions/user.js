@@ -1,4 +1,5 @@
 import firestore from '@react-native-firebase/firestore'
+import storage from '@react-native-firebase/storage'
 
 const createUser = (email, username)=>{
   return {
@@ -9,7 +10,8 @@ const createUser = (email, username)=>{
     .set({
       username: username,
       fullname: '-',
-      bio: '-'
+      bio: '-',
+      image: 'ava.jpg'
     })
   }
 }
@@ -22,7 +24,7 @@ const getUser = (email)=>{
     .get()
   }
 }
-const editUser = (email, name, bio, username)=>{
+const editUser = (email, name, bio, username, imageName)=>{
   return {
     type: 'CREATEUSER',
     payload: firestore()
@@ -31,9 +33,18 @@ const editUser = (email, name, bio, username)=>{
     .update({
       fullname: name,
       username: username,
-      bio: bio
+      bio: bio,
+      image: imageName
     })
   }
 }
+const uploadImage = (imageName, image)=>{
+  return {
+    type: 'UPLOADIMG',
+    payload: storage()
+    .ref(imageName)
+    .putFile(image)
+  }
+}
 
-export {createUser, getUser, editUser}
+export {createUser, getUser, editUser, uploadImage}

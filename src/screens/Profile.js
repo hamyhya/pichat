@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {View, ScrollView, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
         Text, Alert, Image, ActivityIndicator} 
       from 'react-native'
+import storage from '@react-native-firebase/storage'
 
 import {connect} from 'react-redux'
 import {logout} from '../redux/actions/auth'
@@ -15,7 +16,8 @@ class Profile extends Component {
     super(props)
     this.state = {
       name: this.props.user.dataUser.fullname,
-      image: 'https://pbs.twimg.com/profile_images/1255095743112765441/_rqz4BY3.jpg',
+      imageName: this.props.user.dataUser.image,
+      image: 'https://thumbs.dreamstime.com/b/default-avatar-profile-vector-user-profile-default-avatar-profile-vector-user-profile-profile-179376714.jpg',
       username: this.props.user.dataUser.username,
       bio: this.props.user.dataUser.bio,
       email: this.props.auth.email,
@@ -52,15 +54,16 @@ class Profile extends Component {
     this.props.logout()
     this.props.navigation.navigate('login')
   }
-  // fetchUser = () => {
-  //   const email = this.state.email
-  //   this.props.getUser(email)
-  //   this.setState({isLoading: false})
-  // }
+  getUrlUpload = () => {
+    const {imageName} = this.state
+    storage().ref(imageName).getDownloadURL().then((url) => {
+      this.setState({image: url})
+    })
+  }
 
-  // componentDidMount() {
-  //   setTimeout(this.fetchUser, 3000)
-  // }
+  componentDidMount() {
+    this.getUrlUpload()
+  }
   render() {
     const {name, image, username, bio, email, isLoading} = this.state
     return(

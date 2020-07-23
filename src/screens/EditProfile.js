@@ -2,9 +2,10 @@ import React, {Component} from 'react'
 import {View, TextInput, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
         Text, Alert, ActivityIndicator, Image} 
       from 'react-native'
-
+import ImagePicker from 'react-native-image-picker'
+    
 import {connect} from 'react-redux'
-import {editUser} from '../redux/actions/user'
+import {editUser, uploadImage} from '../redux/actions/user'
 import {logout} from '../redux/actions/auth'
 
 const deviceWidth = Dimensions.get('screen').width
@@ -16,10 +17,14 @@ class EditProfile extends Component {
     this.state = {
       name: this.props.route.params.name,
       image: this.props.route.params.image,
+      imageName: 'Change Avatar',
+      imageUrl: this.props.route.params.image,
       username: this.props.route.params.username,
       bio: this.props.route.params.bio,
       email: this.props.route.params.email,
-      isLoading: this.props.user.isLoading
+      isLoading: this.props.user.isLoading,
+      isLoadingImg: this.props.user.isLoadingImg,
+      imgSource: []
     }
   }
   logoutModal = () => {
@@ -44,9 +49,9 @@ class EditProfile extends Component {
     )
   }
   save = () => {
-    const {name, username, bio, email} = this.state
+    const {name, username, bio, email, imageName} = this.state
 
-    this.props.editUser(email, name, bio, username).then(() => {
+    this.props.editUser(email, name, bio, username, imageName).then(() => {
       this.props.logout()
       this.props.navigation.navigate('login')
       Alert.alert('Yay!', 'Succes, now restart your session')
@@ -55,8 +60,45 @@ class EditProfile extends Component {
     })
     
   }
+  selectImage = () => {
+    const options = {
+      title: 'Select Avatar',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    }
+
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('Response = ', response);
+    
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        const uri = response.uri;
+        this.setState({
+          image: uri,
+          imageName: response.fileName,
+          imgSource: response
+        });
+      }
+    })
+  }
+  upload = () => {
+    const {imageName, image, imgSource} = this.state
+
+    if(imgSource.fileSize <= 1500000 && imgSource.type === 'image/jpeg'){
+      this.props.uploadImage(imageName, image).then(() => {
+        Alert.alert('Yay!', 'Success upload image')
+      })
+    }else {
+      Alert.alert('Ooops!', 'Please select image less than 1,5 mb')
+    }
+  }
   render() {
-    const {name, image, bio, username, isLoading} = this.state
+    const {name, image, bio, username, isLoading, imageName, isLoadingImg} = this.state
     return(
       <>
         <StatusBar backgroundColor='#121212' />
@@ -65,9 +107,20 @@ class EditProfile extends Component {
             <View style={style.imgWrapper}>
               <Image source={{uri: image}} style={style.img}/>
             </View>
-            <TouchableOpacity>
-              <Text style={style.imgEditText}>Change avatar</Text>
-            </TouchableOpacity>
+            <View>
+              <TouchableOpacity onPress={this.selectImage}>
+                <Text style={style.imgEditText}>{imageName}</Text>
+              </TouchableOpacity>
+              {isLoadingImg ? (
+                <View style={style.uploadBtn}>
+                <ActivityIndicator size='small' color='white' />
+              </View>
+              ):(
+                <TouchableOpacity style={style.uploadBtn} onPress={this.upload}>
+                <Text style={style.uploadBtnText}>upload</Text>
+              </TouchableOpacity>
+              )}
+            </View>
           </View>
           <View style={style.infoForm}>
             <View style={style.formWrapper}>
@@ -92,6 +145,7 @@ class EditProfile extends Component {
                 style={style.formInput}
                 value={bio}
                 onChangeText={(e) => {this.setState({bio: e})}}
+                multiline
               />
             </View>
             {!isLoading ? (
@@ -110,7 +164,7 @@ class EditProfile extends Component {
   }
 }
 
-const mapDispatchToProps = {editUser, logout}
+const mapDispatchToProps = {editUser, logout, uploadImage}
 const mapStateToProps = state => ({
   user: state.user
 })
@@ -137,6 +191,18 @@ const style = StyleSheet.create({
     marginRight: 30,
     borderWidth: 2,
     borderColor: '#2476C3'
+  },
+  uploadBtn: {
+    marginTop: 10,
+    width: 60,
+    height: 22,
+    backgroundColor: 'green',
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  uploadBtnText: {
+    color: 'white'
   },
   img: {
     borderRadius: 50,
