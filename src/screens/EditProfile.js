@@ -1,7 +1,10 @@
 import React, {Component} from 'react'
 import {View, TextInput, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
-        Text, FlatList, Image} 
+        Text, Alert, ActivityIndicator, Image} 
       from 'react-native'
+
+import {connect} from 'react-redux'
+import {editUser, getUser} from '../redux/actions/user'
 
 const deviceWidth = Dimensions.get('screen').width
 const deviceHeight = Dimensions.get('screen').height
@@ -12,15 +15,26 @@ class EditProfile extends Component {
     this.state = {
       name: this.props.route.params.name,
       image: this.props.route.params.image,
-      email: this.props.route.params.email,
+      username: this.props.route.params.username,
       bio: this.props.route.params.bio,
+      email: this.props.route.params.email,
+      isLoading: this.props.user.isLoading
     }
   }
   save = () => {
-    this.props.navigation.navigate('home')
+    const {name, username, bio, email} = this.state
+
+    this.props.editUser(email, name, bio, username).then(() => {
+      // this.props.getUser(email)
+      this.props.navigation.navigate('home')
+      Alert.alert('Yay!', 'Data updated successfully')
+    }).catch(function() {
+      Alert.alert('Oops!', 'Failed update data :(')
+    })
+    
   }
   render() {
-    const {name, image, bio, email} = this.state
+    const {name, image, bio, username, isLoading} = this.state
     return(
       <>
         <StatusBar backgroundColor='#121212' />
@@ -43,11 +57,11 @@ class EditProfile extends Component {
               />
             </View>
             <View style={style.formWrapper}>
-              <Text style={style.formTitle}>Email</Text>
+              <Text style={style.formTitle}>Username</Text>
               <TextInput
                 style={style.formInput}
-                value={email}
-                onChangeText={(e) => {this.setState({email: e})}}
+                value={username}
+                onChangeText={(e) => {this.setState({username: e})}}
               />
             </View>
             <View style={style.formWrapper}>
@@ -58,9 +72,15 @@ class EditProfile extends Component {
                 onChangeText={(e) => {this.setState({bio: e})}}
               />
             </View>
-            <TouchableOpacity style={style.btnEdit} onPress={this.save}>
+            {!isLoading ? (
+              <TouchableOpacity style={style.btnEdit} onPress={this.save}>
+                <Text style={style.btnEditText}>SAVE</Text>
+              </TouchableOpacity>
+            ):(
+            <View style={style.btnEdit}>
               <Text style={style.btnEditText}>SAVE</Text>
-            </TouchableOpacity>
+            </View>
+            )}
           </View>
         </View>
       </>
@@ -68,7 +88,12 @@ class EditProfile extends Component {
   }
 }
 
-export default EditProfile
+const mapDispatchToProps = {editUser, getUser}
+const mapStateToProps = state => ({
+  user: state.user
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditProfile)
 
 const style = StyleSheet.create({
   fill: {

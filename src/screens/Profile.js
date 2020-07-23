@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {View, ScrollView, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
-        Text, Alert, Image} 
+        Text, Alert, Image, ActivityIndicator} 
       from 'react-native'
 
 import {connect} from 'react-redux'
@@ -14,16 +14,18 @@ class Profile extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      name: 'Ilham Bagas',
+      name: this.props.user.dataUser.fullname,
       image: 'https://pbs.twimg.com/profile_images/1255095743112765441/_rqz4BY3.jpg',
-      username: 'bgsdilham',
-      bio: "Hey there! I'm not using Whatsapp",
-      email: 'ilhambagas92@gmail.com'
+      username: this.props.user.dataUser.username,
+      bio: this.props.user.dataUser.bio,
+      email: this.props.auth.email,
+      isLoading: this.props.user.isLoading
     }
   }
   edit = () => {
     const {name, image, username, bio, email} = this.state
-    this.props.navigation.navigate('edit-profile', {image: image, name: name, email: email, bio: bio})
+    this.props.navigation.navigate('edit-profile', 
+    {image: image, name: name, username: username, bio: bio, email: email})
   }
   logoutModal = () => {
     Alert.alert(
@@ -51,7 +53,7 @@ class Profile extends Component {
     this.props.navigation.navigate('login')
   }
   fetchUser = () => {
-    const email = 'bagas@mail.com'
+    const email =this.state.email
     this.props.getUser(email)
   }
 
@@ -59,46 +61,54 @@ class Profile extends Component {
     this.fetchUser()
   }
   render() {
-    const {name, image, username, bio, email} = this.state
+    const {name, image, username, bio, email, isLoading} = this.state
     // const {username} = this.props.user.dataUser
     return(
       <>
         <StatusBar backgroundColor='#121212' />
         <View style={style.fill}>
-          <View style={style.imgWrapper}>
-            <Image
-              source={{uri: image}}
-              style={style.img} 
-            />
-          </View>
-          <TouchableOpacity style={style.btnEdit} onPress={this.edit}>
-            <Text style={style.btnEditText}>Edit</Text>
-          </TouchableOpacity>
-          <ScrollView style={style.info}>
-            <View style={style.infoWrapper}>
-              <Text style={style.title}>Name</Text>
-              <Text style={style.subTitle}>{name}</Text>
-              <View style={style.line} />
+          {!isLoading ? (
+            <>
+              <View style={style.imgWrapper}>
+                <Image
+                  source={{uri: image}}
+                  style={style.img} 
+                />
+              </View>
+              <TouchableOpacity style={style.btnEdit} onPress={this.edit}>
+                <Text style={style.btnEditText}>Edit</Text>
+              </TouchableOpacity>
+              <ScrollView style={style.info}>
+                <View style={style.infoWrapper}>
+                  <Text style={style.title}>Name</Text>
+                  <Text style={style.subTitle}>{name}</Text>
+                  <View style={style.line} />
+                </View>
+                <View style={style.infoWrapper}>
+                  <Text style={style.title}>Username</Text>
+                  <Text style={style.subTitle}>@{username}</Text>
+                  <View style={style.line} />
+                </View>
+                <View style={style.infoWrapper}>
+                  <Text style={style.title}>Email</Text>
+                  <Text style={style.subTitle}>{email}</Text>
+                  <View style={style.line} />
+                </View>
+                <View style={style.infoWrapper}>
+                  <Text style={style.title}>Bio</Text>
+                  <Text style={style.subTitle}>{bio}</Text>
+                  <View style={style.line} />
+                </View>
+                <TouchableOpacity style={style.btnLogout} onPress={this.logoutModal}>
+                  <Text style={style.btnLogoutText}>LOGOUT</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </>
+          ):(
+            <View style={style.loading}>
+              <ActivityIndicator size='large' color='white' />
             </View>
-            <View style={style.infoWrapper}>
-              <Text style={style.title}>Username</Text>
-              <Text style={style.subTitle}>@{username}</Text>
-              <View style={style.line} />
-            </View>
-            <View style={style.infoWrapper}>
-              <Text style={style.title}>Email</Text>
-              <Text style={style.subTitle}>{email}</Text>
-              <View style={style.line} />
-            </View>
-            <View style={style.infoWrapper}>
-              <Text style={style.title}>Bio</Text>
-              <Text style={style.subTitle}>{bio}</Text>
-              <View style={style.line} />
-            </View>
-            <TouchableOpacity style={style.btnLogout} onPress={this.logoutModal}>
-              <Text style={style.btnLogoutText}>LOGOUT</Text>
-            </TouchableOpacity>
-          </ScrollView>
+          )}
         </View>
       </>
     )
@@ -107,7 +117,8 @@ class Profile extends Component {
 
 const mapDispatchToProps = {logout, getUser}
 const mapStateToProps = state => ({
-  user: state.user
+  user: state.user,
+  auth: state.auth
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile)
@@ -116,6 +127,10 @@ const style = StyleSheet.create({
   fill: {
     flex: 1,
     backgroundColor: '#1B1B1B'
+  },
+  loading: {
+    alignSelf: 'center',
+    marginTop: 50
   },
   imgWrapper: {
     marginTop: 30,

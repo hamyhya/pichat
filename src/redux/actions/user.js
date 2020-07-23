@@ -22,5 +22,18 @@ const getUser = (email)=>{
     .get()
   }
 }
+const editUser = (email, name, bio, username)=>{
+  return {
+    type: 'CREATEUSER',
+    payload: firestore()
+    .collection('users')
+    .doc(email)
+    .update({
+      fullname: name,
+      username: username,
+      bio: bio
+    })
+  }
+}
 
-export {createUser, getUser}
+export {createUser, getUser, editUser}

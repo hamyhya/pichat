@@ -28,7 +28,6 @@ class Login extends Component {
     const { email, password } = this.state
 
     this.props.login(email, password).then(() => {
-      this.fetchUser()
       this.props.navigation.navigate('home')
     }).catch(function() {
       Alert.alert('Ooops!', 'Incorrect email or password :(')
@@ -36,7 +35,10 @@ class Login extends Component {
     
   }
   render() {
-    const {isLoading} = this.props.auth
+    const loading = {
+      user: this.props.user.isLoading,
+      auth: this.props.auth.isLoading
+    }
 
     return(
       <>
@@ -59,7 +61,7 @@ class Login extends Component {
               secureTextEntry
               onChangeText={(e) => {this.setState({password: e})}}
             />
-            {!isLoading ? (
+            {!loading.user && !loading.auth ? (
             <TouchableOpacity style={style.btn} onPress={this.login}>
               <Text style={style.btntext}>LOGIN</Text>
             </TouchableOpacity>
@@ -80,7 +82,8 @@ class Login extends Component {
 
 const mapDispatchToProps = {login, getUser}
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  user: state.auth
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login)

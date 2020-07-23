@@ -3,7 +3,7 @@ const initialState = {
   isLogin: false,
   isError: false,
   errorMsg: '',
-  dataLogin: [],
+  email: '',
   dataCurrent: [],
 }
 
@@ -51,31 +51,7 @@ const auth = (state=initialState, action) => {
         ...state,
         isLoading: false,
         isError: false,
-        dataLogin: action.payload.data,
-        isLogin: true
-      }
-    }
-    case 'CURRENT_PENDING': {
-      return {
-        ...state,
-        isLoading: true,
-        isError: false
-      }
-    }
-    case 'CURRENT_REJECTED': {
-      return {
-        ...state,
-        isLoading: false,
-        isError: true,
-        errorMsg: 'failed!',
-      }
-    }
-    case 'CURRENT_FULFILLED': {
-      return {
-        ...state,
-        isLoading: false,
-        isError: false,
-        dataCurrent: action.payload.data,
+        email: action.payload.user._user.email,
         isLogin: true
       }
     }
@@ -85,6 +61,7 @@ const auth = (state=initialState, action) => {
         isLoading: false,
         isLogin: false,
         isError: false,
+        email: ''
       }
     }
     default: {

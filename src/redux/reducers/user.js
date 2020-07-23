@@ -58,6 +58,7 @@ const user = (state=initialState, action) => {
         isLoading: false,
         isLogin: false,
         isError: false,
+        dataUser: []
       }
     }
     default: {
