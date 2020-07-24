@@ -1,48 +1,130 @@
 import React, {Component} from 'react'
-import {View, TextInput, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
-        Text, FlatList, Image} 
+import {View, ActivityIndicator, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
+        Text, FlatList, Image, Alert} 
       from 'react-native'
-import MapView from 'react-native-maps'
+import MapView, {Marker} from 'react-native-maps'
+import {connect} from 'react-redux'
+import {setLocation} from '../redux/actions/user'
 
 const deviceWidth = Dimensions.get('screen').width
 const deviceHeight = Dimensions.get('screen').height
 
 class Location extends Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      latitude: this.props.user.dataUser.location.latitude,
+      longitude: this.props.user.dataUser.location.longitude,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+      email: this.props.auth.email,
+      x: {
+        latitude: this.props.user.dataUser.location.latitude,
+        longitude: this.props.user.dataUser.location.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }
+    }
+  }
+  modal = () => {
+    Alert.alert(
+      'Are you sure?',
+      "Your friends can see your location",
+      [
+        {
+          text: '',
+          // onPress: () => console.log('Ask me later pressed')
+        },
+        {
+          text: 'Cancel',
+          // onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel'
+        },
+        { text: 'Share', 
+          onPress: this.shareLoc 
+      }
+      ],
+      { cancelable: false }
+    )
+  }
+  shareLoc = () => {
+    const {x, email} = this.state
+
+    this.props.setLocation(email, x.latitude, x.longitude).then(() => {
+      Alert.alert('OK!', 'Your location has been shared')
+    }).catch(function() {
+      Alert.alert('Oops!', 'Failed to share location')
+    })
+  }
+  componentDidUpdate(){
+    console.log(this.state.x)
+  }
   render() {
+    const {latitude, longitude, latitudeDelta, longitudeDelta} = this.state
+    const {isLoadingLoc, isLoading} = this.props.user
     return(
       <>
         <StatusBar backgroundColor='#121212' />
         <View style={style.fill}>
-          <View style={style.mapWrapper}>
-            <MapView
-              style={style.map}
-              initialRegion={{
-                latitude: 37.78825,
-                longitude: -122.4324,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-              }}
-            />
-          </View>
-          <TouchableOpacity style={style.btnEdit}>
-            <Text style={style.btnEditText}>SHARE LOCATION</Text>
-          </TouchableOpacity>
-          <View style={style.locationWrapper}>
-            <Text style={style.btnEditText}>You're latest location :</Text>
-            <Text style={style.locationInfo}>Kedalon, Kalikajar, Wonosobo, Central Java</Text>
-          </View>
+          {isLoading? (
+            <View style={style.loading}>
+              <ActivityIndicator size='large' color='white' />
+            </View>
+          ):(
+            <>
+              <View style={style.mapWrapper}>
+                <MapView
+                  style={style.map}
+                  initialRegion={{
+                    latitude: latitude,
+                    longitude: longitude,
+                    latitudeDelta: latitudeDelta,
+                    longitudeDelta: longitudeDelta,
+                  }}>
+                  <Marker draggable
+                    coordinate={this.state.x}
+                    image={require('../assets/marker.png')}
+                    onDragEnd={(e) => this.setState({ x: e.nativeEvent.coordinate })}
+                  />
+                </MapView>
+              </View>
+              {isLoadingLoc ? (
+                <View style={style.btnEdit}>
+                  <ActivityIndicator size='small' color='white' />
+                </View>
+              ):(
+                <TouchableOpacity style={style.btnEdit} onPress={this.modal}>
+                  <Text style={style.btnEditText}>SHARE LOCATION</Text>
+                </TouchableOpacity>
+              )}
+              <View style={style.locationWrapper}>
+                <Text style={style.btnEditText}>You're latest location :</Text>
+                <Text style={style.locationInfo}>Kedalon, Kalikajar, Wonosobo, Central Java</Text>
+              </View>
+            </>
+          )}
         </View>
       </>
     )
   }
 }
 
-export default Location
+const mapDispatchToProps = {setLocation}
+const mapStateToProps = state => ({
+  user: state.user,
+  auth: state.auth
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Location)
 
 const style = StyleSheet.create({
   fill: {
     flex: 1,
     backgroundColor: '#1B1B1B'
+  },
+  loading: {
+    marginTop: 20,
+    alignSelf: 'center'
   },
   mapWrapper: {
     marginTop: 30,

@@ -1,6 +1,7 @@
 const initialState = {
   isLoading: false,
   isLoadingImg: false,
+  isLoadingLoc: false,
   isError: false,
   errorMsg: '',
   dataUser: []
@@ -72,6 +73,28 @@ const user = (state=initialState, action) => {
       return {
         ...state,
         isLoadingImg: false,
+        isError: false,
+      }
+    }
+    case 'LOCATION_PENDING': {
+      return {
+        ...state,
+        isLoadingLoc: true,
+        isError: false
+      }
+    }
+    case 'LOCATION_REJECTED': {
+      return {
+        ...state,
+        isLoadingLoc: false,
+        isError: true,
+        errorMsg: 'failed!',
+      }
+    }
+    case 'LOCATION_FULFILLED': {
+      return {
+        ...state,
+        isLoadingLoc: false,
         isError: false,
       }
     }

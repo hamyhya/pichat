@@ -11,7 +11,11 @@ const createUser = (email, username)=>{
       username: username,
       fullname: '-',
       bio: '-',
-      image: 'ava.jpg'
+      image: 'ava.jpg',
+      location: {
+        latitude: -6.200000,
+        longitude: 106.816666
+      }
     })
   }
 }
@@ -46,5 +50,19 @@ const uploadImage = (imageName, image)=>{
     .putFile(image)
   }
 }
+const setLocation = (email, latitude, longitude)=>{
+  return {
+    type: 'LOCATION',
+    payload: firestore()
+    .collection('users')
+    .doc(email)
+    .update({
+      location: {
+        latitude: latitude,
+        longitude: longitude
+      }
+    })
+  }
+}
 
-export {createUser, getUser, editUser, uploadImage}
+export {createUser, getUser, editUser, uploadImage, setLocation}
