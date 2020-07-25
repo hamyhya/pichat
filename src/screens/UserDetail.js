@@ -12,14 +12,16 @@ class UserDetail extends Component {
     this.state = {
       image: this.props.route.params.image,
       name: this.props.route.params.name,
-      bio: 'Hey you!'
+      username: this.props.route.params.username,
+      bio: this.props.route.params.bio,
+      location: this.props.route.params.location,
     }
   }
   location = () => {
-    this.props.navigation.navigate('friend-location')
+    this.props.navigation.navigate('friend-location', {location: this.state.location})
   }
   render() {
-    const {image, name, bio} = this.state
+    const {image, name, bio, username} = this.state
     return(
       <>
         <StatusBar backgroundColor='#121212' />
@@ -29,8 +31,8 @@ class UserDetail extends Component {
           </View>
           <Text style={style.name}>{name}</Text>
           <View style={style.locationWrapper}>
-            <Text style={style.btnEditText}>Fullname :</Text>
-            <Text style={style.locationInfo}>{name} {name}</Text>
+            <Text style={style.btnEditText}>Username :</Text>
+            <Text style={style.locationInfo}>@{username}</Text>
           </View>
           <View style={style.locationWrapper}>
             <Text style={style.btnEditText}>Bio :</Text>
@@ -38,7 +40,7 @@ class UserDetail extends Component {
           </View>
           <TouchableOpacity style={style.locationWrapper} onPress={this.location}>
             <Text style={style.btnEditText}>{name} latest location :</Text>
-            <Text style={style.locationInfo}>Kedalon, Kalikajar, Wonosobo, Central Java</Text>
+            <Text style={style.locationInfo}>Tap to see location</Text>
           </TouchableOpacity>
         </View>
       </>

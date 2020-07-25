@@ -18,17 +18,21 @@ class AddChat extends Component {
       bio: '-',
       image: 'https://thumbs.dreamstime.com/b/default-avatar-profile-vector-user-profile-default-avatar-profile-vector-user-profile-profile-179376714.jpg',
       imageName: '',
-      chat: '',
+      location: {},
       email: ''
     }
   }
   chat = () => {
-    const {name, image, chat} = this.state
+    const {name, image, email, bio, location, username} = this.state
 
     this.props.navigation.navigate('chat-detail', {
       name: name,
       image: image,
-      chat: chat
+      email: email,
+      myEmail: this.props.auth.email,
+      bio: bio,
+      location: location,
+      username: username
     })
   }
   search = () => {
@@ -39,7 +43,8 @@ class AddChat extends Component {
         name: this.props.user.dataSearch.fullname,
         username: this.props.user.dataSearch.username,
         bio: this.props.user.dataSearch.bio,
-        imageName: this.props.user.dataSearch.image
+        imageName: this.props.user.dataSearch.image,
+        location: this.props.user.dataSearch.location,
       })
       this.getUrlUpload()
     }).catch(function() {
@@ -117,7 +122,8 @@ class AddChat extends Component {
 
 const mapDispatchToProps = {searchUser}
 const mapStateToProps = state => ({
-  user: state.user
+  user: state.user,
+  auth: state.auth
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddChat)

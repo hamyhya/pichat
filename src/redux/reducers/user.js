@@ -152,7 +152,7 @@ const user = (state=initialState, action) => {
         isLoading: false,
         isLogin: false,
         isError: false,
-        dataUser: REMOVEAVA
+        dataUser: []
       }
     }
     default: {

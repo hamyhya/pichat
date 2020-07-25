@@ -12,6 +12,7 @@ const createUser = (email, username)=>{
       fullname: '-',
       bio: '-',
       image: 'ava.jpg',
+      eamil: email,
       location: {
         latitude: -6.200000,
         longitude: 106.816666

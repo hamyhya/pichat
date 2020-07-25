@@ -108,10 +108,10 @@ class Location extends Component {
                   <Text style={style.btnEditText}>SHARE LOCATION</Text>
                 </TouchableOpacity>
               )}
-              <View style={style.locationWrapper}>
+              {/* <View style={style.locationWrapper}>
                 <Text style={style.btnEditText}>You're latest location :</Text>
                 <Text style={style.locationInfo}>Kedalon, Kalikajar, Wonosobo, Central Java</Text>
-              </View>
+              </View> */}
             </>
           )}
         </View>
@@ -140,7 +140,7 @@ const style = StyleSheet.create({
   mapWrapper: {
     marginTop: 30,
     width: 300,
-    height: 200,
+    height: 400,
     alignSelf: 'center',
     backgroundColor: 'white',
   },

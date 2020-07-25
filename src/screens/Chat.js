@@ -114,15 +114,14 @@ class Chat extends Component {
                     data={data}
                     style={style.flatList}
                     renderItem={({item}) => (
-                      <TouchableOpacity onPress={() => this.props.navigation.navigate('chat-detail', 
-                      {image: item.image, name: item.name, chat: item.chat})}>
+                      <View>
                         <List
                           name={item.name}
                           image={item.image}
                           chat={item.chat}
                           date={item.date}
                         />
-                      </TouchableOpacity>
+                      </View>
                     )}
                     keyExtractor={item => item.id.toString()}
                   />

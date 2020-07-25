@@ -11,13 +11,13 @@ class FriendLocation extends Component {
   constructor(props){
     super(props)
     this.state = {
-      latitude: -6.938308034924606,
-      longitude: 107.63873890042305,
+      latitude: this.props.route.params.location.latitude,
+      longitude: this.props.route.params.location.longitude,
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
       x: {
-        latitude: -6.938308034924606,
-        longitude: 107.63873890042305,
+        latitude: this.props.route.params.location.latitude,
+        longitude: this.props.route.params.location.longitude,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       }

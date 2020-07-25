@@ -13,9 +13,12 @@ const ChatDetail = () => {
   }, []);
 
   const ReceiveMessage = () => {
-    const userId = 'bagas'
+    const res = state.myEmail.replace('@', '0')
+    const res2 = state.email.replace('@', '0')
+    const userId = res.replace('.', '0')
+    const userReceive = res2.replace('.', '0')
     database()
-      .ref(`/chat/${userId}/ilham`)
+      .ref(`/chat/${userId}/${userReceive}`)
       .once('value')
       .then((snapshot) => {
         snapshot.forEach((doc) => {
@@ -32,8 +35,10 @@ const ChatDetail = () => {
   const sendMessage = useCallback((messages = []) => {
     for (let i = 0; i < messages.length; i++) {
       const {text, user} = messages[i];
-      const userId = 'ilham'
-      const userReceive = 'bagas'
+      const res = state.myEmail.replace('@', '0')
+      const res2 = state.email.replace('@', '0')
+      const userId = res.replace('.', '0')
+      const userReceive = res2.replace('.', '0')
       const message = {
         text,
         user,
@@ -56,23 +61,36 @@ const ChatDetail = () => {
   const state = {
     image: route.params.image,
     name: route.params.name,
+    username: route.params.username,
+    bio: route.params.bio,
+    location: route.params.location,
+    email: route.params.email,
+    myEmail: route.params.myEmail,
   }
+  const res2 = state.email.replace('@', '0')
+  const userReceive = res2.replace('.', '0')
   return (
     <View style={style.fill}>
-      <TouchableOpacity style={style.header}>
+      <TouchableOpacity style={style.header} onPress={() => {navigation.navigate('user-detail', {
+      image: state.image,
+      name: state.name,
+      username: state.username,
+      bio: state.bio,
+      location: state.location,
+    })}}>
         <View style={style.imgWrapper}>
           <Image style={style.img} source={{uri: state.image}}/>
         </View>
         <View>
           <Text style={style.name}>{state.name}</Text>
-          <Text style={style.bio}>Hey there! I'm not using Whatsapp</Text>
+          <Text style={style.bio}>{state.bio}</Text>
         </View>
       </TouchableOpacity>
       <GiftedChat
         messages={messages}
         onSend={(messages) => sendMessage(messages)}
         user={{
-          _id: 'ilham',
+          _id: userReceive,
         }}
       />
     </View>
