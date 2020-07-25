@@ -13,6 +13,7 @@ import ExploreDetail from '../screens/ExploreDetail'
 import Profile from '../screens/Profile'
 import AddChat from '../screens/AddChat'
 import UserDetail from '../screens/UserDetail'
+import FriendLocation from '../screens/FriendLocation'
 
 const Stack = createStackNavigator()
 
@@ -86,6 +87,15 @@ class Navigation extends Component {
               <Stack.Screen 
                 component={UserDetail}
                 name='user-detail'
+                options={{
+                  title: '',
+                  headerTransparent: true,
+                  headerTintColor: 'black'
+                }}
+              />
+              <Stack.Screen 
+                component={FriendLocation}
+                name='friend-location'
                 options={{
                   title: '',
                   headerTransparent: true,

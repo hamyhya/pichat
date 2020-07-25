@@ -5,6 +5,7 @@ import {View, ActivityIndicator, StyleSheet, Dimensions, StatusBar, TouchableOpa
 import MapView, {Marker} from 'react-native-maps'
 import {connect} from 'react-redux'
 import {setLocation} from '../redux/actions/user'
+import Geolocation from '@react-native-community/geolocation'
 
 const deviceWidth = Dimensions.get('screen').width
 const deviceHeight = Dimensions.get('screen').height
@@ -13,14 +14,14 @@ class Location extends Component {
   constructor(props){
     super(props)
     this.state = {
-      latitude: this.props.user.dataUser.location.latitude,
-      longitude: this.props.user.dataUser.location.longitude,
+      latitude: 0,
+      longitude: 0,
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
       email: this.props.auth.email,
       x: {
-        latitude: this.props.user.dataUser.location.latitude,
-        longitude: this.props.user.dataUser.location.longitude,
+        latitude: 0,
+        longitude: 0,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       }
@@ -58,6 +59,16 @@ class Location extends Component {
   }
   componentDidUpdate(){
     console.log(this.state.x)
+  }
+  componentDidMount(){
+    Geolocation.getCurrentPosition(info => this.setState({
+      latitude: info.coords.latitude,
+      longitude: info.coords.longitude,
+      x:{
+        latitude: info.coords.latitude,
+        longitude: info.coords.longitude
+      }
+    }))
   }
   render() {
     const {latitude, longitude, latitudeDelta, longitudeDelta} = this.state

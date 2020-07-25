@@ -28,6 +28,15 @@ const getUser = (email)=>{
     .get()
   }
 }
+const searchUser = (email)=>{
+  return {
+    type: 'SEARCHUSER',
+    payload: firestore()
+    .collection('users')
+    .doc(email)
+    .get()
+  }
+}
 const editUser = (email, name, bio, username, imageName)=>{
   return {
     type: 'CREATEUSER',
@@ -39,6 +48,17 @@ const editUser = (email, name, bio, username, imageName)=>{
       username: username,
       bio: bio,
       image: imageName
+    })
+  }
+}
+const deleteAvatar = (email)=>{
+  return {
+    type: 'REMOVEAVA',
+    payload: firestore()
+    .collection('users')
+    .doc(email)
+    .update({
+      image: 'ava.jpg'
     })
   }
 }
@@ -65,4 +85,4 @@ const setLocation = (email, latitude, longitude)=>{
   }
 }
 
-export {createUser, getUser, editUser, uploadImage, setLocation}
+export {createUser, getUser, searchUser, editUser, uploadImage, setLocation, deleteAvatar}

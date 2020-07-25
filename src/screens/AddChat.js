@@ -1,7 +1,10 @@
 import React, {Component} from 'react'
 import {View, TextInput, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
-        Text, FlatList, Image} 
+        Text, FlatList, Image, Alert, ActivityIndicator} 
       from 'react-native'
+import {connect} from 'react-redux'
+import {searchUser} from '../redux/actions/user'
+import storage from '@react-native-firebase/storage'
 
 const deviceWidth = Dimensions.get('screen').width
 const deviceHeight = Dimensions.get('screen').height
@@ -10,11 +13,13 @@ class AddChat extends Component {
   constructor(props){
     super(props)
     this.state = {
-      name: 'Ilham Bagas',
-      username: 'bgsdilham',
-      bio: 'Hey you! Looking for me?',
+      name: '-',
+      username: '-',
+      bio: '-',
       image: 'https://thumbs.dreamstime.com/b/default-avatar-profile-vector-user-profile-default-avatar-profile-vector-user-profile-profile-179376714.jpg',
-      chat: ''
+      imageName: '',
+      chat: '',
+      email: ''
     }
   }
   chat = () => {
@@ -26,63 +31,108 @@ class AddChat extends Component {
       chat: chat
     })
   }
+  search = () => {
+    const {email} = this.state
+
+    this.props.searchUser(email).then(() => {
+      this.setState({
+        name: this.props.user.dataSearch.fullname,
+        username: this.props.user.dataSearch.username,
+        bio: this.props.user.dataSearch.bio,
+        imageName: this.props.user.dataSearch.image
+      })
+      this.getUrlUpload()
+    }).catch(function() {
+      Alert.alert('Hmmm', `Can't found ${email}`)
+    })
+  }
+  getUrlUpload = () => {
+    const {imageName} = this.state
+    storage().ref(imageName).getDownloadURL().then((url) => {
+      this.setState({image: url})
+    })
+  }
   render() {
     const {name, username, bio, image} = this.state
+    const {isLoadingSearch} = this.props.user
     return(
       <>
         <StatusBar backgroundColor='#121212' />
         <View style={style.fill}>
-          <View style={style.header}>
-            <TextInput 
-              placeholder='Looking for someone?' 
-              placeholderTextColor='#B8B8B8'
-              style={style.searchInput}
-            />
-            <TouchableOpacity style={style.searchBtn}>
-              <Text style={style.searchBtnText}>search</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={style.imgWrapper}>
-            <Image
-              source={{uri: image}}
-              style={style.img} 
-            />
-          </View>
-          <View style={style.info}>
-            <View style={style.infoWrapper}>
-              <Text style={style.title}>Name</Text>
-              <Text style={style.subTitle}>{name}</Text>
-              <View style={style.line} />
+          {isLoadingSearch ? (
+            <View style={style.loading}>
+              <ActivityIndicator size='large' color='white'/>
             </View>
-            <View style={style.infoWrapper}>
-              <Text style={style.title}>Username</Text>
-              <Text style={style.subTitle}>@{username}</Text>
-              <View style={style.line} />
-            </View>
-            <View style={style.infoWrapper}>
-              <Text style={style.title}>Bio</Text>
-              <Text style={style.subTitle}>{bio}</Text>
-              <View style={style.line} />
-            </View>
-            <TouchableOpacity style={style.btnLogout} onPress={this.chat}>
-              <Text style={style.btnLogoutText}>START CHAT</Text>
-            </TouchableOpacity>
-          </View>
+          ):(
+            <>
+              <View style={style.header}>
+                <TextInput 
+                  placeholder='Looking for someone?' 
+                  placeholderTextColor='#B8B8B8'
+                  style={style.searchInput}
+                  onChangeText={(e) => {this.setState({email: e})}}
+                />
+                <TouchableOpacity style={style.searchBtn} onPress={this.search}>
+                  <Text style={style.searchBtnText}>search</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={style.imgWrapper}>
+                <Image
+                  source={{uri: image}}
+                  style={style.img} 
+                />
+              </View>
+              <View style={style.info}>
+                <View style={style.infoWrapper}>
+                  <Text style={style.title}>Name</Text>
+                  <Text style={style.subTitle}>{name}</Text>
+                  <View style={style.line} />
+                </View>
+                <View style={style.infoWrapper}>
+                  <Text style={style.title}>Username</Text>
+                  <Text style={style.subTitle}>@ {username}</Text>
+                  <View style={style.line} />
+                </View>
+                <View style={style.infoWrapper}>
+                  <Text style={style.title}>Bio</Text>
+                  <Text style={style.subTitle}>{bio}</Text>
+                  <View style={style.line} />
+                </View>
+                {username === '-' ? (
+                  <>
+                  </>
+                ):(
+                  <TouchableOpacity style={style.btnLogout} onPress={this.chat}>
+                    <Text style={style.btnLogoutText}>START CHAT</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </>
+          )}
         </View>
       </>
     )
   }
 }
 
-export default AddChat
+const mapDispatchToProps = {searchUser}
+const mapStateToProps = state => ({
+  user: state.user
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddChat)
 
 const style = StyleSheet.create({
   fill: {
     flex: 1,
     backgroundColor: '#1B1B1B'
   },
+  loading: {
+    alignSelf: 'center',
+    marginTop: 50
+  },
   header: {
-    marginTop: 10,
+    marginTop: 50,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',

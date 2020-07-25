@@ -6,7 +6,7 @@ import storage from '@react-native-firebase/storage'
 
 import {connect} from 'react-redux'
 import {logout} from '../redux/actions/auth'
-import {getUser} from '../redux/actions/user'
+import {getUser, deleteAvatar} from '../redux/actions/user'
 
 const deviceWidth = Dimensions.get('screen').width
 const deviceHeight = Dimensions.get('screen').height
@@ -50,6 +50,27 @@ class Profile extends Component {
       { cancelable: false }
     )
   }
+ modalAvatar = () => {
+    Alert.alert(
+      'Remove avatar?',
+      "Your avatar will be reseted to default",
+      [
+        {
+          text: '',
+          // onPress: () => console.log('Ask me later pressed')
+        },
+        {
+          text: 'Cancel',
+          // onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel'
+        },
+        { text: 'Remove', 
+          onPress: this.removeAvatar 
+      }
+      ],
+      { cancelable: false }
+    )
+  }
   logout = () => {
     this.props.logout()
     this.props.navigation.navigate('login')
@@ -60,12 +81,20 @@ class Profile extends Component {
       this.setState({image: url})
     })
   }
+  removeAvatar = () => {
+    const {email} = this.state
+    this.setState({image: 'https://thumbs.dreamstime.com/b/default-avatar-profile-vector-user-profile-default-avatar-profile-vector-user-profile-profile-179376714.jpg'})
+    this.props.deleteAvatar(email).then(() => {
+      Alert.alert('Poof!', 'Avatar has been set to default')
+    })
+  }
 
   componentDidMount() {
     this.getUrlUpload()
   }
   render() {
     const {name, image, username, bio, email, isLoading} = this.state
+    const {isLoadingAva} = this.props.user
     return(
       <>
         <StatusBar backgroundColor='#121212' />
@@ -76,9 +105,20 @@ class Profile extends Component {
               style={style.img} 
             />
           </View>
-          <TouchableOpacity style={style.btnEdit} onPress={this.edit}>
-            <Text style={style.btnEditText}>Edit</Text>
-          </TouchableOpacity>
+          <View style={style.btnWrapper}>
+            <TouchableOpacity style={style.btnEdit} onPress={this.edit}>
+              <Text style={style.btnEditText}>Edit Profile</Text>
+            </TouchableOpacity>
+            {isLoadingAva ? (
+              <View style={style.btnDelete}>
+                <ActivityIndicator size='small' color='white' />
+              </View>
+            ):(
+              <TouchableOpacity style={style.btnDelete} onPress={this.modalAvatar}>
+                <Text style={style.btnEditText}>Remove Avatar</Text>
+              </TouchableOpacity>
+            )}
+          </View>
           <ScrollView style={style.info}>
             <View style={style.infoWrapper}>
               <Text style={style.title}>Name</Text>
@@ -110,7 +150,7 @@ class Profile extends Component {
   }
 }
 
-const mapDispatchToProps = {logout, getUser}
+const mapDispatchToProps = {logout, getUser, deleteAvatar}
 const mapStateToProps = state => ({
   user: state.user,
   auth: state.auth
@@ -141,6 +181,10 @@ const style = StyleSheet.create({
     flex: 1,
     resizeMode: 'cover',
     borderRadius: 50
+  },
+  btnWrapper: {
+    flexDirection: 'row',
+    alignSelf: 'center'
   },
   info: {
     marginTop: 40
@@ -183,13 +227,24 @@ const style = StyleSheet.create({
   },
   btnEdit: {
     marginTop: 5,
-    width: 50,
+    width: 100,
     height: 25,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#2476C3',
     borderRadius: 5
+  },
+  btnDelete: {
+    marginTop: 5,
+    width: 100,
+    height: 25,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#b71c1c',
+    borderRadius: 5,
+    marginLeft: 10
   },
   btnEditText: {
     color: 'white'

@@ -15,6 +15,9 @@ class UserDetail extends Component {
       bio: 'Hey you!'
     }
   }
+  location = () => {
+    this.props.navigation.navigate('friend-location')
+  }
   render() {
     const {image, name, bio} = this.state
     return(
@@ -33,10 +36,10 @@ class UserDetail extends Component {
             <Text style={style.btnEditText}>Bio :</Text>
             <Text style={style.locationInfo}>{bio}</Text>
           </View>
-          <View style={style.locationWrapper}>
+          <TouchableOpacity style={style.locationWrapper} onPress={this.location}>
             <Text style={style.btnEditText}>{name} latest location :</Text>
             <Text style={style.locationInfo}>Kedalon, Kalikajar, Wonosobo, Central Java</Text>
-          </View>
+          </TouchableOpacity>
         </View>
       </>
     )

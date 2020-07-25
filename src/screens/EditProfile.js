@@ -107,7 +107,7 @@ class EditProfile extends Component {
             <View style={style.imgWrapper}>
               <Image source={{uri: image}} style={style.img}/>
             </View>
-            <View>
+            <View style={style.uploadWrapper}>
               <TouchableOpacity onPress={this.selectImage}>
                 <Text style={style.imgEditText}>{imageName}</Text>
               </TouchableOpacity>
@@ -191,6 +191,9 @@ const style = StyleSheet.create({
     marginRight: 30,
     borderWidth: 2,
     borderColor: '#2476C3'
+  },
+  uploadWrapper: {
+    width: 200
   },
   uploadBtn: {
     marginTop: 10,
