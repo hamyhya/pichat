@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import {View, TextInput, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
         Text, FlatList, Image, ActivityIndicator} 
       from 'react-native'
+import database from '@react-native-firebase/database'
+import storage from '@react-native-firebase/storage'
 
 import {connect} from 'react-redux'
 import {getUser} from '../redux/actions/user'
@@ -13,7 +15,14 @@ class Chat extends Component {
   constructor(props){
     super(props)
     this.state = {
-      email: this.props.auth.email
+      email: this.props.auth.email,
+      name: '',
+      username: '',
+      imageName: 'ava.jpg',
+      bio: '',
+      friendEmail: '',
+      image: 'https://thumbs.dreamstime.com/b/default-avatar-profile-vector-user-profile-default-avatar-profile-vector-user-profile-profile-179376714.jpg',
+      location: {}
     }
   }
   addChat = () => {
@@ -23,13 +32,51 @@ class Chat extends Component {
     const email = this.state.email
     this.props.getUser(email)
   }
+  getFriends = async () => {
+    const email = this.state.email.replace('@', '0')
+    const _email = email.replace('.', '0')
 
+    await database().ref(`friends/${_email}`)
+    .once('value', snapshot => {
+      snapshot.val() !== null && this.setState({
+        name: snapshot.val().fullName,
+        username: snapshot.val().username,
+        imageName: snapshot.val().imageName,
+        bio: snapshot.val().bio,
+        friendEmail: snapshot.val().email,
+        location: snapshot.val().location
+      })
+    }).then(() => {
+      this.getUrlUpload()
+    })
+  }
+  chat = () => {
+    const {name, image, friendEmail, bio, location, username} = this.state
+
+    this.props.navigation.navigate('chat-detail', {
+      name: name,
+      image: image,
+      email: friendEmail,
+      myEmail: this.props.auth.email,
+      bio: bio,
+      location: location,
+      username: username
+    })
+  }
+  getUrlUpload = () => {
+    const {imageName} = this.state
+    storage().ref(imageName).getDownloadURL().then((url) => {
+      this.setState({image: url})
+    })
+  }
   componentDidMount() {
     this.fetchUser()
+    this.getFriends()
   }
 
   render() {
     const {isLoading} = this.props.user
+    const {name, friendEmail, username, imageName, bio, location, image} = this.state
     const data = [
       {
         id: 1,
@@ -105,12 +152,38 @@ class Chat extends Component {
                     placeholderTextColor='#B8B8B8'
                     style={style.searchInput}
                   />
-                  <TouchableOpacity style={style.searchBtn}>
+                  <TouchableOpacity style={style.searchBtn} onPress={this.getFriends}>
                     <Text style={style.searchBtnText}>search</Text>
                   </TouchableOpacity>
                 </View>
                 <View>
-                  <FlatList
+                {friendEmail === '' ? (
+                  <>
+                  </>
+                ):(
+                  <>
+                    <View style={style.listWrapper}>
+                      <TouchableOpacity style={style.chatInfoWrapper} onPress={this.chat}>
+                        <View style={style.imgWrapper}>
+                          <Image 
+                            source={{uri: image}}
+                            style={style.img}
+                          />
+                        </View>
+                        <View>
+                          <Text style={style.chatTitle}>{name}</Text>
+                          <Text style={style.chatSubTitle}>{bio}</Text>
+                        </View>
+                      </TouchableOpacity>
+                      <Text style={style.chatDate}>new</Text>
+                    </View>
+                    <View style={style.line} />
+                  </>
+                )}
+                <TouchableOpacity style={style.refershBtn} onPress={this.getFriends}>
+                  <Text style={style.refreshText}>Refresh chat</Text>
+                </TouchableOpacity>
+                  {/* <FlatList
                     data={data}
                     style={style.flatList}
                     renderItem={({item}) => (
@@ -124,7 +197,7 @@ class Chat extends Component {
                       </View>
                     )}
                     keyExtractor={item => item.id.toString()}
-                  />
+                  /> */}
                 </View>
               </View>
               <View style={style.btnWrapper}>
@@ -214,6 +287,16 @@ const style = StyleSheet.create({
   searchBtnText: {
     color: 'white',
     fontWeight: 'bold'
+  },
+  refershBtn: {
+    alignSelf: 'center',
+    width: 200,
+    marginTop: 20
+  },
+  refreshText: {
+    color: '#2476C3',
+    fontWeight: 'bold',
+    alignSelf: 'center'
   },
   flatList: {
     marginBottom: 15

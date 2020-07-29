@@ -5,6 +5,7 @@ import {View, TextInput, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
 import {connect} from 'react-redux'
 import {searchUser} from '../redux/actions/user'
 import storage from '@react-native-firebase/storage'
+import database from '@react-native-firebase/database'
 
 const deviceWidth = Dimensions.get('screen').width
 const deviceHeight = Dimensions.get('screen').height
@@ -34,6 +35,7 @@ class AddChat extends Component {
       location: location,
       username: username
     })
+    this.addfriend()
   }
   search = () => {
     const {email} = this.state
@@ -55,6 +57,21 @@ class AddChat extends Component {
     const {imageName} = this.state
     storage().ref(imageName).getDownloadURL().then((url) => {
       this.setState({image: url})
+    })
+  }
+  addfriend = () => {
+    const {email, name, username, bio, location, imageName} = this.state
+    const myEmail = this.props.auth.email.replace('@', '0')
+    const _myEmail = myEmail.replace('.', '0')
+
+    database().ref(`/friends/${_myEmail}`)
+    .set({
+      email: email,
+      fullName: name,
+      username: username,
+      bio: bio,
+      location: location,
+      imageName: imageName
     })
   }
   render() {

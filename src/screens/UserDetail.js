@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {View, TextInput, StyleSheet, Dimensions, StatusBar, TouchableOpacity,
-        Text, FlatList, Image} 
+        Text, ScrollView, Image} 
       from 'react-native'
 
 const deviceWidth = Dimensions.get('screen').width
@@ -30,18 +30,20 @@ class UserDetail extends Component {
             <Image source={{uri: image}} style={style.img}/>
           </View>
           <Text style={style.name}>{name}</Text>
-          <View style={style.locationWrapper}>
-            <Text style={style.btnEditText}>Username :</Text>
-            <Text style={style.locationInfo}>@{username}</Text>
-          </View>
-          <View style={style.locationWrapper}>
-            <Text style={style.btnEditText}>Bio :</Text>
-            <Text style={style.locationInfo}>{bio}</Text>
-          </View>
-          <TouchableOpacity style={style.locationWrapper} onPress={this.location}>
-            <Text style={style.btnEditText}>{name} latest location :</Text>
-            <Text style={style.locationInfo}>Tap to see location</Text>
-          </TouchableOpacity>
+          <ScrollView style={style.scrollView}>
+            <View style={style.locationWrapper}>
+              <Text style={style.btnEditText}>Username :</Text>
+              <Text style={style.locationInfo}>@{username}</Text>
+            </View>
+            <View style={style.locationWrapper}>
+              <Text style={style.btnEditText}>Bio :</Text>
+              <Text style={style.locationInfo}>{bio}</Text>
+            </View>
+            <TouchableOpacity style={style.locationWrapper} onPress={this.location}>
+              <Text style={style.btnEditText}>{name} latest location :</Text>
+              <Text style={style.locationInfo}>Tap to see location</Text>
+            </TouchableOpacity>
+          </ScrollView>
         </View>
       </>
     )
@@ -63,6 +65,9 @@ const style = StyleSheet.create({
   img: {
     flex: 1,
     resizeMode: 'cover'
+  },
+  scrollView: {
+    marginBottom: 20
   },
   name: {
     marginTop: 15,

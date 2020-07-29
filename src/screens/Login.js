@@ -30,11 +30,15 @@ class Login extends Component {
   login = () => {
     const { email, password } = this.state
 
-    this.props.login(email, password).then(() => {
-      this.props.navigation.navigate('home')
-    }).catch(function() {
-      Alert.alert('Ooops!', 'Incorrect email or password :(')
-    })
+    if(email === '' || email === ' ' || password === ''){
+      Alert.alert('Ooops!', 'All form must be filled')
+    }else {
+      this.props.login(email, password).then(() => {
+        this.props.navigation.navigate('home')
+      }).catch(function() {
+        Alert.alert('Ooops!', 'Incorrect email or password :(')
+      })
+    }
   }
   loaded = () => {
     this.setState({isLoaded: true})

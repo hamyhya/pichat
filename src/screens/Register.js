@@ -22,16 +22,21 @@ class Register extends Component {
 
   register = () => {
     const {email, password, username} = this.state
-    this.props.register(email, password).then(() => {
-      this.props.createUser(email, username).then(() => {
-        this.props.navigation.navigate('login')
-        Alert.alert('Yay!', 'Register successfully')
+
+    if(email === '' || email === ' ' || username === '' || username === ' ' || password === ''){
+      Alert.alert('Ooops!', 'All form must be filled')
+    }else {
+      this.props.register(email, password).then(() => {
+        this.props.createUser(email, username).then(() => {
+          this.props.navigation.navigate('login')
+          Alert.alert('Yay!', 'Register successfully')
+        }).catch(function ()  {
+          Alert.alert('Oops!', 'Registered failed')
+        })
       }).catch(function ()  {
         Alert.alert('Oops!', 'Registered failed')
       })
-    }).catch(function ()  {
-      Alert.alert('Oops!', 'Registered failed')
-    })
+    }
   }
   render() {
     const {isLoading} = this.props.auth
