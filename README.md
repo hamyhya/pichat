@@ -8,7 +8,7 @@
 **Screenshots**
 
 <p align='center'>
-<img width="500" src="https://raw.githubusercontent.com/aldipee/e-commerce-FE/development/assets/4.jpg" />
+<img width="500" src="https://i.postimg.cc/Vk88tsdy/collapse.png" />
 </p>
 
 
