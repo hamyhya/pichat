@@ -52,11 +52,11 @@ class Location extends Component {
     const {x, email} = this.state
 
     this.props.setLocation(email, x.latitude, x.longitude)
-    // .then(() => {
-    //   Alert.alert('OK!', 'Your location has been shared')
-    // }).catch(function() {
-    //   Alert.alert('Oops!', 'Failed to share location')
-    // })
+    .then(() => {
+      Alert.alert('OK!', 'Your location has been shared')
+    }).catch(function() {
+      Alert.alert('Oops!', 'Failed to share location')
+    })
   }
   componentDidUpdate(){
     console.log(this.state.x)
@@ -69,9 +69,7 @@ class Location extends Component {
         latitude: info.coords.latitude,
         longitude: info.coords.longitude
       }
-    })).then(() => {
-      this.shareLoc()
-    })
+    }))
   }
   render() {
     const {latitude, longitude, latitudeDelta, longitudeDelta} = this.state
@@ -107,9 +105,9 @@ class Location extends Component {
                   <ActivityIndicator size='small' color='white' />
                 </View>
               ):(
-                <View style={style.btnEdit}>
-                  <Text style={style.btnEditText}>YOUR LOCATION</Text>
-                </View>
+                <TouchableOpacity style={style.btnEdit} onPress={this.modal}>
+                  <Text style={style.btnEditText}>SHARE LOCATION</Text>
+                </TouchableOpacity>
               )}
               {/* <View style={style.locationWrapper}>
                 <Text style={style.btnEditText}>You're latest location :</Text>
